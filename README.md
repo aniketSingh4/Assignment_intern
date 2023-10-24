@@ -58,47 +58,47 @@ def get_review(soup):
 
     return review_count
     
-# Required Operation--
-    if __name__ == '__main__':
+   # Required Operation--
+  if __name__ == '__main__':
     #Add our user agent
     HEADERS = ({'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36','Accept-Language':'en-US, en;q=00.5'})
 
-    #The webpage url
-    url = "https://www.amazon.in/s?k=bags&crid=2M096C61O4MLT&qid=1653308124&sprefix=ba%2Caps%2C283&ref=sr_pg_1"
+  #The webpage url
+  url = "https://www.amazon.in/s?k=bags&crid=2M096C61O4MLT&qid=1653308124&sprefix=ba%2Caps%2C283&ref=sr_pg_1"
 
-    #HTTP Request
-    webpage = requests.get(url,headers = HEADERS)
+  #HTTP Request
+  webpage = requests.get(url,headers = HEADERS)
 
-    #Soup Object Containing all data
-    soup = BeautifulSoup(webpage.content,"html.parser")
+  #Soup Object Containing all data
+  soup = BeautifulSoup(webpage.content,"html.parser")
 
-    #Fetch links as list of Tag Object
+  #Fetch links as list of Tag Object
     links = soup.find_all('a', attrs = {'class':'a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal'})
 
-    #Store the link
+   #Store the link
     links_list = []
 
-    #Loop for extracting links from tag objects
+   #Loop for extracting links from tag objects
     for link in links:
         links_list.append(link.get('href'))
 
-    d = {"title":[], "price":[], "rating":[],"reviews":[]}
+  d = {"title":[], "price":[], "rating":[],"reviews":[]}
 
-    #Loop for extracting product details from each link
+   #Loop for extracting product details from each link
     for link in links_list:
         new_webpage = requests.get("https://www.amazon.com"+link, headers = HEADERS)
 
         new_soup = BeautifulSoup(new_webpage.content,"html.parser")
 
 
-     # Function calls to display all necessery product information
+   # Function calls to display all necessery product information
         d['title'].append(get_title(new_soup))
         d['price'].append(get_price(new_soup))
         d['rating'].append(get_rating(new_soup))
         d['reviews'].append(get_review(new_soup))
 
-    amazon_df = pd.DataFrame.from_dict(d)
-    amazon_df['title'].replace('',np.nan, inplace= True)
-    amazon_df = amazon_df.dropna(subset=["title"])
-    amazon_df.to_csv("amazon_data.csv",header= True, index = False)
+  amazon_df = pd.DataFrame.from_dict(d)
+  amazon_df['title'].replace('',np.nan, inplace= True)
+  amazon_df = amazon_df.dropna(subset=["title"])
+  amazon_df.to_csv("amazon_data.csv",header= True, index = False)
 
